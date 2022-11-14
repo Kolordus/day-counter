@@ -5,12 +5,20 @@ class DayService {
     return earlier.difference(after).inDays.abs();
   }
 
-  static String formatDate(DateTime date) {
+  static String dateToString(DateTime date) {
     return date.toString().substring(0, 10);
   }
 
+  static DateTime? stringToDate(String date) {
+    if (date == "null") {
+      return null;
+    }
+
+    return DateTime.parse(date);
+  }
+
   static DateTime getToday() {
-    return DateTime.now();
+    return DateTime.parse(DayService.dateToString(DateTime.now()));
   }
 
 }

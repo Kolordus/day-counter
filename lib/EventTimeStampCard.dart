@@ -51,36 +51,41 @@ class EventTimestampCard extends StatelessWidget {
     var noStartDate = startDate == null;
     var noEndDate = endDate == null;
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Text(
-            name,
-            style: const TextStyle(fontSize: 20),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Divider(),
+          Column(
+            children: [
+              Text(
+                name,
+                style: const TextStyle(fontSize: 20),
+              ),
+              noStartDate
+                  ? Text("")
+                  : Text("Od ${DayService.dateToString(startDate!)}",
+                  style: const TextStyle(fontSize: 20)),
+              noEndDate
+                  ? Text("")
+                  : Text("Do ${DayService.dateToString(endDate!)}",
+                  style: const TextStyle(fontSize: 20)),
+            ],
           ),
-        ),
-        const Divider(),
-        noStartDate
-            ? Text("")
-            : Text("Od ${DayService.formatDate(startDate!)}",
-                style: const TextStyle(fontSize: 20)),
-        noEndDate
-            ? Text("")
-            : Text("Do ${DayService.formatDate(endDate!)}",
-                style: const TextStyle(fontSize: 20)),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-          child: Text(_calculateText(noEndDate, noStartDate)),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            "${_calculateDays(noStartDate, noEndDate)} dni",
-            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+            child: Text(_calculateText(noEndDate, noStartDate), style: TextStyle(fontSize: 23),),
           ),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "${_calculateDays(noStartDate, noEndDate)} dni",
+              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

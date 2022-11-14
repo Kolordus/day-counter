@@ -1,4 +1,6 @@
 import 'package:day_counter/EventTimeStampCard.dart';
+import 'package:day_counter/pages/DayCalculator.dart';
+import 'package:day_counter/pages/DaysPage.dart';
 import 'package:day_counter/service/DayService.dart';
 import 'package:flutter/material.dart';
 
@@ -10,38 +12,49 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  int _selectedIndex = 0;
+  PageController pageController = PageController(initialPage: 0);
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      pageController.animateToPage(index,
+          duration: const Duration(milliseconds: 100), curve: Curves.bounceInOut);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-      ),
-      backgroundColor: Colors.black87,
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              EventTimestampCard.eventCounting(
-                "między dniami do dzisiaj",
-                DateTime.now().subtract(const Duration(days: 5)),
-                DateTime.now(),
-              ),
-              EventTimestampCard.eventCounting(
-                "między dniami w przesłości",
-                DateTime.now().subtract(const Duration(days: 5)),
-                DateTime.now().subtract(const Duration(days: 3)),
-              ),
-              EventTimestampCard.eventCountingFromPast(
-                  "od daty startowej",
-                  DateTime.now().subtract(const Duration(days: 5))),
-              EventTimestampCard.eventCountingToFuture(
-                "do daty koncowej", DateTime.now().add(const Duration(days: 5)),
-              ),
-            ],
-          ),
+      backgroundColor: Colors.indigo[900],
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_month),
+              label: 'Days',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.calculate_outlined),
+              label: 'Calculator',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.amber[800],
+          onTap: _onItemTapped,
         ),
-      ),
+        body: PageView(
+          controller: pageController,
+          onPageChanged: (value) => {
+            setState(() {
+              _selectedIndex = value;
+            })
+          },
+          children: const [
+            DaysPage(),
+            DayCalculator(),
+          ],
+        )
     );
   }
 }
