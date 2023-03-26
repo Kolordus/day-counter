@@ -4,13 +4,6 @@ import 'package:flutter/material.dart';
 import '../Database.dart';
 import '../model/EventTimestamp.dart';
 
-class DaysPage extends StatefulWidget {
-  const DaysPage({super.key});
-
-  @override
-  State<StatefulWidget> createState() => _DaysPageState();
-}
-
 class _DaysPageState extends State<DaysPage>{
   @override
   Widget build(BuildContext context) {
@@ -24,6 +17,7 @@ class _DaysPageState extends State<DaysPage>{
                 itemCount: allDates.length,
                 itemBuilder: (context, index) {
                   EventTimestamp currentItem = allDates.elementAt(index);
+                  var inProperOrder = _inProperOrder(currentItem);
                   return GestureDetector(
                     onDoubleTap: () {
                       Database.delete(currentItem.name);
@@ -34,8 +28,9 @@ class _DaysPageState extends State<DaysPage>{
                         children: <Widget>[
                           EventTimestampCard(
                               name: currentItem.name,
-                              startDate: currentItem.startDate,
-                              endDate: currentItem.endDate)
+                              startDate: inProperOrder! ? currentItem.startDate : currentItem.endDate,
+                              endDate: inProperOrder? currentItem.endDate : currentItem.startDate
+                          )
                         ],
                       ),
                     ),
@@ -45,4 +40,18 @@ class _DaysPageState extends State<DaysPage>{
           return const Center(child: CircularProgressIndicator());
         });
   }
+
+  bool? _inProperOrder(EventTimestamp currentItem) {
+    if (currentItem.endDate != null && currentItem.startDate != null) {
+      return currentItem.startDate?.isBefore(currentItem.endDate!);
+    }
+    return true;
+  }
+}
+
+class DaysPage extends StatefulWidget {
+  const DaysPage({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _DaysPageState();
 }

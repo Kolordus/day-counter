@@ -1,8 +1,8 @@
-import 'package:day_counter/EventTimeStampCard.dart';
 import 'package:day_counter/pages/DayCalculator.dart';
 import 'package:day_counter/pages/DaysPage.dart';
-import 'package:day_counter/service/DayService.dart';
 import 'package:flutter/material.dart';
+
+import 'DayAdder.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,7 +12,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   int _selectedIndex = 0;
   PageController pageController = PageController(initialPage: 0);
 
@@ -20,14 +19,15 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _selectedIndex = index;
       pageController.animateToPage(index,
-          duration: const Duration(milliseconds: 100), curve: Curves.bounceInOut);
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.bounceInOut);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.indigo[900],
+        backgroundColor: Colors.indigo[400],
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
@@ -37,6 +37,10 @@ class _HomePageState extends State<HomePage> {
             BottomNavigationBarItem(
               icon: Icon(Icons.calculate_outlined),
               label: 'Calculator',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.add_alarm_outlined),
+              label: 'Adder',
             ),
           ],
           currentIndex: _selectedIndex,
@@ -53,8 +57,8 @@ class _HomePageState extends State<HomePage> {
           children: const [
             DaysPage(),
             DayCalculator(),
+            DayAdder()
           ],
-        )
-    );
+        ));
   }
 }

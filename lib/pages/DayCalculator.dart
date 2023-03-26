@@ -1,8 +1,10 @@
 
+import 'package:day_counter/pages/HomePage.dart';
 import 'package:day_counter/service/DayService.dart';
 import 'package:flutter/material.dart';
 
 import '../Database.dart';
+import 'DaysPage.dart';
 
 class DayCalculator extends StatefulWidget {
   const DayCalculator({super.key});
@@ -33,7 +35,7 @@ class _DayCalculatorState extends State<DayCalculator> {
               style: const TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold)),
           ElevatedButton(
               onPressed: () async {
-                DateTimeRange newDates = await pickDate(dateRange);
+                DateTimeRange newDates = await _pickDate(dateRange);
                 setState(() {
                   dateRange = newDates;
                 });
@@ -64,7 +66,10 @@ class _DayCalculatorState extends State<DayCalculator> {
                 border: OutlineInputBorder(borderSide: BorderSide(color: Colors.white, style: BorderStyle.solid))),
           ),
           ElevatedButton(
-              onPressed: isInputAvailable ? () => _createNew() : null,
+              onPressed: isInputAvailable ? () => {
+                _createNew(),
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()),
+              )} : null,
               child: const Text('zapisz', style: TextStyle(color: Colors.white),),
           ),
         ],
@@ -72,7 +77,7 @@ class _DayCalculatorState extends State<DayCalculator> {
     );
   }
 
-  Future pickDate(DateTimeRange dateRange) async {
+  Future _pickDate(DateTimeRange dateRange) async {
     DateTimeRange? dateTimeRange = await showDateRangePicker(
         locale : const Locale('pl',''),
         context: context,

@@ -21,4 +21,11 @@ class DayService {
     return DateTime.parse(DayService.dateToString(DateTime.now()));
   }
 
+  static DateTime subtractDays(DateTime givenDate, int days) {
+    return givenDate.subtract(Duration(days: days));
+  }
+
+  static DateTime addDaysDays(DateTime givenDate, int days) {
+    return givenDate.add(Duration(days: days));
+  }
 }

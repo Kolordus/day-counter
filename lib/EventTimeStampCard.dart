@@ -50,6 +50,7 @@ class EventTimestampCard extends StatelessWidget {
   Widget _cardContent(String name, DateTime? startDate, DateTime? endDate) {
     var noStartDate = startDate == null;
     var noEndDate = endDate == null;
+    var days = _calculateDays(noStartDate, noEndDate);
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -79,9 +80,17 @@ class EventTimestampCard extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "${_calculateDays(noStartDate, noEndDate)} dni",
-              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+            child: Column(
+              children: [
+                Text(
+                  "${days} dni",
+                  style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  "${_calculateWeeks(days)} tygodni",
+                  style: const TextStyle(fontSize: 15),
+                ),
+              ],
             ),
           ),
         ],
@@ -108,6 +117,12 @@ class EventTimestampCard extends StatelessWidget {
     return countingFromPast
         ? DayService.daysBetweenDates(startDate!, DayService.getToday()).toString()
         : DayService.daysBetweenDates(startDate!, endDate!).toString();
+  }
+
+  String _calculateWeeks(String days) {
+    var parse = int.parse(days);
+
+    return (parse / 7).toInt().toString();
   }
 
   bool _bothInPast() {
