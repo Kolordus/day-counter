@@ -29,7 +29,8 @@ class _DaysPageState extends State<DaysPage>{
                           EventTimestampCard(
                               name: currentItem.name,
                               startDate: inProperOrder! ? currentItem.startDate : currentItem.endDate,
-                              endDate: inProperOrder? currentItem.endDate : currentItem.startDate
+                              endDate: inProperOrder ? currentItem.endDate : currentItem.startDate,
+                              refresh: () => {refresh()}
                           )
                         ],
                       ),
@@ -46,6 +47,10 @@ class _DaysPageState extends State<DaysPage>{
       return currentItem.startDate?.isBefore(currentItem.endDate!);
     }
     return true;
+  }
+
+  void refresh() {
+    setState(() {});
   }
 }
 

@@ -30,13 +30,10 @@ class Database {
   }
 
   static Future<List<EventTimestamp>> getAll() async {
-    List<EventTimestamp> all = [];
-
-    Hive.box(_boxName).keys.forEach((key) {
-      all.add(read(key));
-    });
-
-    return all;
+    return Hive.box(_boxName)
+        .keys
+        .map((e) => read(e))
+        .toList();
   }
 
   static void delete(String name) => Hive.box(_boxName).delete(name);
@@ -44,5 +41,4 @@ class Database {
   static void clearAll() {
     Hive.box(_boxName).clear();
   }
-
 }

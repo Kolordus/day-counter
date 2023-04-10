@@ -1,3 +1,4 @@
+import 'package:day_counter/Database.dart';
 import 'package:day_counter/service/DayService.dart';
 import 'package:flutter/material.dart';
 
@@ -18,11 +19,17 @@ class EventTimestampCard extends StatelessWidget {
         name: name, startDate: startDate, endDate: endDate);
   }
 
-  EventTimestampCard({required this.name, this.startDate, this.endDate});
+  EventTimestampCard(
+      {super.key,
+      required this.name,
+      this.startDate,
+      this.endDate,
+      this.refresh});
 
   final String name;
   final DateTime? startDate;
   final DateTime? endDate;
+  final Function? refresh;
 
   @override
   Widget build(BuildContext context) {
@@ -54,46 +61,55 @@ class EventTimestampCard extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Divider(),
-          Column(
-            children: [
-              Text(
-                name,
-                style: const TextStyle(fontSize: 20),
-              ),
-              noStartDate
-                  ? Text("")
-                  : Text("Od ${DayService.dateToString(startDate!)}",
-                  style: const TextStyle(fontSize: 20)),
-              noEndDate
-                  ? Text("")
-                  : Text("Do ${DayService.dateToString(endDate!)}",
-                  style: const TextStyle(fontSize: 20)),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-            child: Text(_calculateText(noEndDate, noStartDate), style: TextStyle(fontSize: 23),),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Divider(),
+            Column(
               children: [
                 Text(
-                  "${days} dni",
-                  style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  name,
+                  style: const TextStyle(fontSize: 20),
                 ),
-                Text(
-                  "${_calculateWeeks(days)} tygodni",
-                  style: const TextStyle(fontSize: 15),
-                ),
+                noStartDate
+                    ? Text("")
+                    : Text("Od ${DayService.dateToString(startDate)}",
+                        style: const TextStyle(fontSize: 20)),
+                noEndDate
+                    ? ElevatedButton(
+                        onPressed: () => {noEndDate = false, _stopCounting()},
+                        child: const Text("stop counting"))
+                    : Text("Do ${DayService.dateToString(endDate)}",
+                        style: const TextStyle(fontSize: 20)),
               ],
             ),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+              child: Text(
+                _calculateText(noEndDate, noStartDate),
+                style: const TextStyle(fontSize: 23),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Text(
+                    "$days dni",
+                    style: const TextStyle(
+                        fontSize: 30, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "${_calculateWeeks(days)} tygodni",
+                    style: const TextStyle(fontSize: 15),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -115,18 +131,24 @@ class EventTimestampCard extends StatelessWidget {
     }
 
     return countingFromPast
-        ? DayService.daysBetweenDates(startDate!, DayService.getToday()).toString()
+        ? DayService.daysBetweenDates(startDate!, DayService.getToday())
+            .toString()
         : DayService.daysBetweenDates(startDate!, endDate!).toString();
   }
 
   String _calculateWeeks(String days) {
     var parse = int.parse(days);
-
     return (parse / 7).toInt().toString();
   }
 
   bool _bothInPast() {
     DateTime today = DateTime.now();
     return endDate!.add(const Duration(minutes: 1)).isBefore(today);
+  }
+
+  Future<void> _stopCounting() async {
+    refresh!();
+    await Database.create(name, DayService.dateToString(startDate!),
+        DayService.dateToString(DayService.getToday()));
   }
 }
