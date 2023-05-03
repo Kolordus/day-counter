@@ -19,7 +19,7 @@ class EventTimestampCard extends StatelessWidget {
         name: name, startDate: startDate, endDate: endDate);
   }
 
-  EventTimestampCard(
+  const EventTimestampCard(
       {super.key,
       required this.name,
       this.startDate,
@@ -60,13 +60,12 @@ class EventTimestampCard extends StatelessWidget {
     var days = _calculateDays(noStartDate, noEndDate);
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(6.0),
       child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
+        // scrollDirection: Axis.horizontal,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Divider(),
             Column(
               children: [
                 Text(
@@ -85,15 +84,12 @@ class EventTimestampCard extends StatelessWidget {
                         style: const TextStyle(fontSize: 20)),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-              child: Text(
-                _calculateText(noEndDate, noStartDate),
-                style: const TextStyle(fontSize: 23),
-              ),
+            Text(
+              _calculateText(noEndDate, noStartDate),
+              style: const TextStyle(fontSize: 23),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.fromLTRB(2.0, 0.0, 0.0, 0.0),
               child: Column(
                 children: [
                   Text(

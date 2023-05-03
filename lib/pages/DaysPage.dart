@@ -12,7 +12,6 @@ class _DaysPageState extends State<DaysPage>{
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
             var allDates = snapshot.data as List<EventTimestamp>;
-
             return ListView.builder(
                 itemCount: allDates.length,
                 itemBuilder: (context, index) {

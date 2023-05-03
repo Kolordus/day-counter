@@ -1,3 +1,4 @@
+import 'package:day_counter/model/EventTimestamp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -36,5 +37,6 @@ class MyApp extends StatelessWidget {
 Future<void> initHiveDb() async {
   final appDocumentDir = await path_provider.getApplicationDocumentsDirectory();
   await Hive.initFlutter(appDocumentDir.path);
+  Hive.registerAdapter<EventTimestamp>(EventTimestampAdapter());
   await Hive.openBox('dates');
 }
