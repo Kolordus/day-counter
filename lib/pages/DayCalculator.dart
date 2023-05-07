@@ -4,7 +4,6 @@ import 'package:day_counter/service/DayService.dart';
 import 'package:flutter/material.dart';
 
 import '../Database.dart';
-import 'DaysPage.dart';
 
 class DayCalculator extends StatefulWidget {
   const DayCalculator({super.key});
@@ -68,7 +67,7 @@ class _DayCalculatorState extends State<DayCalculator> {
           ElevatedButton(
               onPressed: isInputAvailable ? () => {
                 _createNew(),
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const HomePage()),
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const HomePage()),
               )} : null,
               child: const Text('zapisz', style: TextStyle(color: Colors.white),),
           ),

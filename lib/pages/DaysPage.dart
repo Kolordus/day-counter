@@ -4,41 +4,66 @@ import 'package:flutter/material.dart';
 import '../Database.dart';
 import '../model/EventTimestamp.dart';
 
-class _DaysPageState extends State<DaysPage>{
+class _DaysPageState extends State<DaysPage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: Database.getAll(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData) {
             var allDates = snapshot.data as List<EventTimestamp>;
-            return ListView.builder(
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(0,35,0,0),
+              child: ReorderableListView.builder(
                 itemCount: allDates.length,
                 itemBuilder: (context, index) {
                   EventTimestamp currentItem = allDates.elementAt(index);
                   var inProperOrder = _inProperOrder(currentItem);
                   return GestureDetector(
-                    onDoubleTap: () {
-                      Database.delete(currentItem.name);
-                      setState(() {});
+                    key: ValueKey(currentItem.name),
+                    onDoubleTap: () async {
+                      setState(() {
+                        Database.delete(index);
+                      });
                     },
                     child: Card(
                       child: Column(
                         children: <Widget>[
                           EventTimestampCard(
                               name: currentItem.name,
-                              startDate: inProperOrder! ? currentItem.startDate : currentItem.endDate,
-                              endDate: inProperOrder ? currentItem.endDate : currentItem.startDate,
-                              refresh: () => {refresh()}
-                          )
+                              startDate: inProperOrder!
+                                  ? currentItem.startDate
+                                  : currentItem.endDate,
+                              endDate: inProperOrder
+                                  ? currentItem.endDate
+                                  : currentItem.startDate,
+                              refresh: () => {refresh()}),
                         ],
                       ),
                     ),
                   );
-                });
+                },
+                onReorder: (int oldIndex, int newIndex) {
+                  setState(() {
+                    newIndex = newIndex > oldIndex ? newIndex - 1 : newIndex;
+                    // if bigger then deal with array indexes
+
+                    _handleReplacement(allDates, oldIndex, newIndex);
+                  });
+                },
+              ),
+            );
           }
           return const Center(child: CircularProgressIndicator());
         });
+  }
+
+  void _handleReplacement(
+      List<EventTimestamp> allDates, int oldIndex, int newIndex) {
+    var removeAt = allDates.removeAt(oldIndex);
+    allDates.insert(newIndex, removeAt);
+    Database.replace(allDates).then((_) => {setState(() {})});
   }
 
   bool? _inProperOrder(EventTimestamp currentItem) {

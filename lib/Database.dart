@@ -15,15 +15,16 @@ class Database {
 
   static Future<int> create(
       String name, String startDate, String endDate) async {
-    var eventTimestamp = EventTimestamp(name, DayService.stringToDate(startDate), DayService.stringToDate(endDate));
-    return await Hive.box(_boxName).add(eventTimestamp.toJson());
+    var eventTimestamp = EventTimestamp(name,
+        DayService.stringToDate(startDate), DayService.stringToDate(endDate));
+    return await Hive.box(_boxName).add(eventTimestamp);
   }
 
   static Future<List<EventTimestamp>> getAll() async {
     List<EventTimestamp> list = [];
-    Hive.box(_boxName)
-        .values
-        .forEach((e) { print(e); list.add(EventTimestamp.fromJson(e)); } );
+    Hive.box(_boxName).values.forEach((eventTimeStamp) {
+      list.add(eventTimeStamp);
+    });
 
     return Future.value(list);
   }
@@ -33,17 +34,16 @@ class Database {
     return EventTimestamp.fromJson(json);
   }
 
-  static void delete(String name) {
-    var box = Hive.box<EventTimestamp>(_boxName);
-
-    for (var element in box.keys) {
-      if (box.get(element)?.name == name) {
-        box.deleteAt(element);
-      }
-    }
+  static void delete(int index) async {
+    await Hive.box(_boxName).deleteAt(index);
   }
 
-  static void clearAll() {
-    Hive.box(_boxName).clear();
+  static Future<int> clearAll() async {
+    return await Hive.box(_boxName).clear();
+  }
+
+  static Future<void> replace(List<EventTimestamp> allDates) async {
+    var i = await clearAll();
+    await Hive.box(_boxName).addAll(allDates);
   }
 }

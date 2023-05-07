@@ -73,7 +73,7 @@ class EventTimestampCard extends StatelessWidget {
                   style: const TextStyle(fontSize: 20),
                 ),
                 noStartDate
-                    ? Text("")
+                    ? const Text("")
                     : Text("Od ${DayService.dateToString(startDate)}",
                         style: const TextStyle(fontSize: 20)),
                 noEndDate
@@ -121,6 +121,10 @@ class EventTimestampCard extends StatelessWidget {
   }
 
   String _calculateDays(bool countingToFuture, bool countingFromPast) {
+    if(countingToFuture && countingFromPast){
+      return '0';
+    }
+
     if (countingToFuture) {
       return DayService.daysBetweenDates(DayService.getToday(), endDate!)
           .toString();
@@ -134,7 +138,7 @@ class EventTimestampCard extends StatelessWidget {
 
   String _calculateWeeks(String days) {
     var parse = int.parse(days);
-    return (parse / 7).toInt().toString();
+    return (parse ~/ 7).toString();
   }
 
   bool _bothInPast() {

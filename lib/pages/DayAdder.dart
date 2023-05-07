@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../Database.dart';
-import 'DaysPage.dart';
 
 class DayAdder extends StatefulWidget {
   const DayAdder({super.key});
@@ -108,7 +107,7 @@ class _DayAdderState extends State<DayAdder> {
             onPressed: isInputAvailable
                 ? () => {
                       _createNew(),
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                             builder: (context) => const HomePage()),
