@@ -13,8 +13,7 @@ class Database {
   startdate,enddate
    */
 
-  static Future<int> create(
-      String name, String startDate, String endDate) async {
+  static Future<int> create(String name, String startDate, String endDate) async {
     var eventTimestamp = EventTimestamp(name,
         DayService.stringToDate(startDate), DayService.stringToDate(endDate));
     return await Hive.box(_boxName).add(eventTimestamp);
@@ -29,9 +28,13 @@ class Database {
     return Future.value(list);
   }
 
-  static EventTimestamp read(String name) {
-    Map<String, Object> json = Hive.box(_boxName).get(name);
-    return EventTimestamp.fromJson(json);
+  static Future<EventTimestamp> read(int index) async {
+    var event = await Hive.box(_boxName).get(index);
+
+    if (event is EventTimestamp) {
+      return event;
+    }
+    return EventTimestamp.fromJson(event);
   }
 
   static void delete(int index) async {
@@ -43,7 +46,25 @@ class Database {
   }
 
   static Future<void> replace(List<EventTimestamp> allDates) async {
-    var i = await clearAll();
+    await clearAll();
     await Hive.box(_boxName).addAll(allDates);
+  }
+
+  static Future<void> stopCounting(String name) async {
+    var index = _getIndex(name);
+    var toChange = await read(index);
+    toChange.endDate = DayService.getToday();
+    await Hive.box(_boxName).put(index, toChange);
+  }
+
+  static int _getIndex(String name) {
+    for (int key in Hive.box(_boxName).keys) {
+      EventTimestamp event = Hive.box(_boxName).get(key);
+      if (event.name == name) {
+        return key;
+      }
+    }
+
+    return -1;
   }
 }

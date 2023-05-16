@@ -121,7 +121,7 @@ class EventTimestampCard extends StatelessWidget {
   }
 
   String _calculateDays(bool countingToFuture, bool countingFromPast) {
-    if(countingToFuture && countingFromPast){
+    if (countingToFuture && countingFromPast) {
       return '0';
     }
 
@@ -147,8 +147,7 @@ class EventTimestampCard extends StatelessWidget {
   }
 
   Future<void> _stopCounting() async {
+    await Database.stopCounting(name);
     refresh!();
-    await Database.create(name, DayService.dateToString(startDate!),
-        DayService.dateToString(DayService.getToday()));
   }
 }
